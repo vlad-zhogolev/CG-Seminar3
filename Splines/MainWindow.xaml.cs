@@ -29,7 +29,7 @@ namespace Spline
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		private List<Point> m_points = new List<Point>();
+		private List<SupportingPoint> m_points = new List<SupportingPoint>();
 
 		public MainWindow()
 		{
@@ -37,11 +37,12 @@ namespace Spline
 		}
 
 		private void MainCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-		{
-			var point = e.GetPosition(MainCanvas);
+		{			
+			var point = new SupportingPoint(e.GetPosition(MainCanvas));
 			m_points.Add(point);
-			MainCanvas.Children.Clear();
-			DrawAllPoints();
+			MainCanvas.Children.Add(point.Ellipse);
+			//MainCanvas.Children.Clear();
+			//DrawAllPoints();
 		}
 
 		private void ClearCanvas_Click(object sender, RoutedEventArgs e)
@@ -54,9 +55,12 @@ namespace Spline
 		{
 			foreach(var point in m_points)
 			{
-				DrawPoint(point);
+				Canvas.SetLeft(point, point.Coordinates.X);
+				Canvas.SetTop(point, point.Coordinates.Y);
+				MainCanvas.Children.Add(point);
 			}
 		}
+		
 
 		private void DrawPixel(Point point)
 		{
