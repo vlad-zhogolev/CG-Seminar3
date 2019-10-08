@@ -29,38 +29,52 @@ namespace Spline
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		private List<SupportingPoint> m_points = new List<SupportingPoint>();
+		private IList<Point> m_points = new List<Point>();
+		private BezierCurve m_curve;
 
 		public MainWindow()
 		{
 			InitializeComponent();
 		}
 
-		private void MainCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+		private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{			
-			var point = new SupportingPoint(e.GetPosition(MainCanvas));
-			m_points.Add(point);
-			MainCanvas.Children.Add(point.Ellipse);
-			//MainCanvas.Children.Clear();
-			//DrawAllPoints();
+			if ( m_points.Count == 10)
+			{
+				ClearCanvas();
+			}
+			else
+			{
+				m_points.Add(e.GetPosition(Canvas));				
+				Canvas.Children.Clear();
+				DrawAllPoints();
+				if ( m_points.Count == 10 )
+				{
+					m_curve = new BezierCurve(m_points);
+					Canvas.Children.Add(m_curve);
+				}
+			}					
 		}
 
 		private void ClearCanvas_Click(object sender, RoutedEventArgs e)
 		{
-			MainCanvas.Children.Clear();
+			ClearCanvas();
+		}
+
+		private void ClearCanvas()
+		{
+			Canvas.Children.Clear();
 			m_points.Clear();
+			m_curve = null;
 		}
 
 		private void DrawAllPoints()
 		{
 			foreach(var point in m_points)
 			{
-				Canvas.SetLeft(point, point.Coordinates.X);
-				Canvas.SetTop(point, point.Coordinates.Y);
-				MainCanvas.Children.Add(point);
+				DrawPoint(point);
 			}
-		}
-		
+		}		
 
 		private void DrawPixel(Point point)
 		{
@@ -76,7 +90,7 @@ namespace Spline
 			ellipse.Height = Constants.PIXEL_RADIUS;
 			ellipse.Fill = Constants.PIXEL_COLOR;
 
-			MainCanvas.Children.Add(ellipse);
+			Canvas.Children.Add(ellipse);
 		}
 
 		private void DrawPoint(Point point, int radius = Constants.POINT_RADIUS)
@@ -88,7 +102,7 @@ namespace Spline
 			ellipse.Height = 2 * Constants.POINT_RADIUS;
 			ellipse.Fill = Constants.POINT_COLOR;
 
-			MainCanvas.Children.Add(ellipse);
+			Canvas.Children.Add(ellipse);
 		}
 	}
 }

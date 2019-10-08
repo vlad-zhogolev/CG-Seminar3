@@ -46,8 +46,8 @@ namespace Spline
 			Ellipse.Height = Constants.POINT_DIAMETER;
 			Ellipse.Fill = Constants.POINT_COLOR;
 
-			Canvas.SetLeft(Ellipse, m_coordinates.X);
-			Canvas.SetTop(Ellipse, m_coordinates.Y);
+			Canvas.SetLeft(this, m_coordinates.X);
+			Canvas.SetTop(this, m_coordinates.Y);
 		}
 
 		public SupportingPoint(int x, int y) : this(new Point(x, y)) {}
