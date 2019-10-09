@@ -103,12 +103,22 @@ namespace Spline
 
 		private void CloseCurveButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (m_curve != null)
+			if (m_curve != null && m_isCurveDrawn)
 			{
 				m_curve.Erase(Canvas);
 				m_curve.Close();
 				m_curve.Draw(Canvas);
 			}			
+		}
+
+		private void OpenCurveButton_Click(object sender, RoutedEventArgs e)
+		{
+			if ( m_curve != null && m_isCurveDrawn )
+			{
+				m_curve.Erase(Canvas);
+				m_curve.Open();
+				m_curve.Draw(Canvas);
+			}
 		}
 
 		private void PointStartMoving(object sender, MouseButtonEventArgs e)

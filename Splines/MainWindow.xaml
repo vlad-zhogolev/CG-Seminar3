@@ -12,15 +12,15 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
-            <Button Height="25" Width="100" Margin="10 10 10 10" x:Name="Default" Content="Default curve"/>
-            <Button Name="ClearCanvasButton" Content="Clear" Width="50" Height="25" Click="ClearCanvas_Click"/>
-            <Button x:Name="DrawButton" Content="Draw" Width="50" Margin="10" Height="25" Click="DrawButton_Click"/>
-            <Button x:Name="CloseCurveButton" Content="Close curve" Width="75" Height="25" Click="CloseCurveButton_Click"/>
-            <StackPanel Width="111" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel Width="111" Margin="0,9" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <RadioButton x:Name="SetPointsRadioButton" Content="Set points" Margin="10,5" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SetPointsRadioButton_Checked" IsChecked="True"/>
                 <RadioButton x:Name="MovePointsRadioButton" Content="Move points" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,5" Checked="MovePointsRadioButton_Checked"/>
             </StackPanel>
-            <StackPanel Width="100"/>
+            <Button Height="25" Width="100" Margin="10 10 10 10" x:Name="Default" Content="Default curve"/>
+            <Button x:Name="ClearCanvasButton" Content="Clear" Width="50" Height="25" Click="ClearCanvas_Click"/>
+            <Button x:Name="DrawButton" Content="Draw" Width="50" Margin="10" Height="25" Click="DrawButton_Click"/>
+            <Button x:Name="CloseCurveButton" Content="Close curve" Width="75" Height="25" Click="CloseCurveButton_Click"/>
+            <Button x:Name="OpenCurveButton" Content="Open curve" Click="OpenCurveButton_Click" Margin="10,23,10,22" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="3.033,1.327" Height="25"/>
         </StackPanel>
         <Border Grid.Row="1" Grid.Column="1" Grid.RowSpan="2"
             Margin="5 5 5 5"
