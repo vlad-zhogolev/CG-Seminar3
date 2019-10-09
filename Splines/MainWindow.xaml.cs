@@ -30,15 +30,17 @@ namespace Spline
 	public partial class MainWindow : Window
 	{
 		// Program state
-		private Mode m_mode = Mode.Default;
-		private DefaultMode m_defaultMode = DefaultMode.ArbitraryOrder;
+		private CursorMode m_cursorMode = CursorMode.SettingPoints;
+		private DrawingMode m_drawingMode = DrawingMode.Default;
+		private BezierLineType m_lineType = BezierLineType.ArbitraryOrder;
 		private IList<SupportingPoint> m_points = new List<SupportingPoint>();
 		private BezierCurve m_curve;
 		private bool m_isCurveDrawn = false;
 
 		// Currently moving point
-		double m_pointX;
-		double m_pointY;
+		UIElement m_capturedPoint = null;
+		double m_currentX;
+		double m_currentY;
 		double m_nextX;
 		double m_nextY;
 
@@ -49,13 +51,21 @@ namespace Spline
 
 		private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
-			if (m_isCurveDrawn)
+			if (m_cursorMode == CursorMode.MovingPoints)
+			{
+				return;
+			}
+
+			if ( m_isCurveDrawn )
 			{
 				return;
 			}
 			var supportingPoint = new SupportingPoint(e.GetPosition(Canvas));
-			m_points.Add(supportingPoint);	
-			Canvas.Children.Add(supportingPoint);			
+			supportingPoint.MouseLeftButtonDown += PointStartMoving;
+			supportingPoint.MouseMove += PointMoving;
+			supportingPoint.MouseLeftButtonUp += PointEndMoving;
+			m_points.Add(supportingPoint);
+			Canvas.Children.Add(supportingPoint);
 		}
 
 		private void ClearCanvas_Click(object sender, RoutedEventArgs e)
@@ -71,15 +81,15 @@ namespace Spline
 		}
 
 		private void DrawButton_Click(object sender, RoutedEventArgs e)
-		{
+		{			
 			if (m_points.Count < 2)
 			{
 				return;
 			}
 
-			switch (m_mode)
+			switch (m_drawingMode)
 			{
-				case Mode.Default:
+				case DrawingMode.Default:
 				{
 					m_curve = new BezierCurve(m_points);
 					foreach(var point in m_points)
@@ -103,6 +113,49 @@ namespace Spline
 				m_curve.Close();
 				m_curve.Draw(Canvas);
 			}			
+		}
+
+		private void PointStartMoving(object sender, MouseButtonEventArgs e)
+		{
+			if ( m_cursorMode != CursorMode.MovingPoints )
+			{
+				return;
+			}
+			(sender as SupportingPoint).Opacity = 0.5;
+			m_capturedPoint = (UIElement)sender;
+			Mouse.Capture(m_capturedPoint);
+		}
+
+		private void PointMoving(object sender, MouseEventArgs e)
+		{
+			if (m_capturedPoint != null)
+			{
+				var point = sender as SupportingPoint;
+				double x = e.GetPosition(Canvas).X;
+				double y = e.GetPosition(Canvas).Y;
+				if ( x < 0 || y < 0 || x > Canvas.ActualWidth || y > Canvas.ActualHeight )
+					return;
+				point.X += x - point.X;
+				point.Y += y - point.Y;
+			}
+		}
+
+		private void PointEndMoving(object sender, MouseButtonEventArgs e)
+		{
+			e.Handled = true;
+			(sender as SupportingPoint).Opacity = 1;
+			Mouse.Capture(null);
+			m_capturedPoint = null;
+		}
+
+		private void CursorModeRadioButton_Checked(object sender, RoutedEventArgs e)
+		{
+			m_cursorMode = CursorMode.MovingPoints;
+		}
+
+		private void CursorModeRadioButton_Unchecked(object sender, RoutedEventArgs e)
+		{
+			m_cursorMode = CursorMode.SettingPoints;
 		}
 	}
 }

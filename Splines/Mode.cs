@@ -6,14 +6,20 @@ using System.Threading.Tasks;
 
 namespace Spline
 {
-	enum Mode
+	enum CursorMode
+	{
+		SettingPoints,
+		MovingPoints,
+	}
+
+	enum DrawingMode
 	{
 		Default,
 		Castiglio,
-		DefaultWithCastiglio
+		DefaultWithCastiglio,
 	}
 
-	enum DefaultMode
+	enum BezierLineType
 	{
 		ArbitraryOrder,
 		ThirdOrder,
