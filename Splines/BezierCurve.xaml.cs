@@ -50,13 +50,6 @@ namespace Spline
 			CalculateCurve();
 		}
 
-		private void PointPositionChanged(object sender, PropertyChangedEventArgs e)
-		{
-			Erase(m_canvas);
-			CalculateCurve();
-			Draw(m_canvas);
-		}
-
 		public void Draw(Canvas canvas)
 		{
 			canvas.Children.Add(this);
@@ -124,15 +117,7 @@ namespace Spline
 				var pointVector = MultiplyMatrices(PM, stepMatrix); // it will have 2 * 1 size
 				var point = new System.Windows.Point() { X = pointVector[0, 0], Y = pointVector[1, 0] };
 				Curve.Points.Add(point);
-
-				//var point = new System.Windows.Point()
-				//{
-				//	X = Math.Pow(1 - t, 3) * m_supportingPoints[0].X + 3 * t * Math.Pow(1 - t, 2) * m_supportingPoints[1].X + 3 * t * t * (1 - t) * m_supportingPoints[2].X + t * t * t * m_supportingPoints[3].X,
-				//	Y = Math.Pow(1 - t, 3) * m_supportingPoints[0].Y + 3 * t * Math.Pow(1 - t, 2) * m_supportingPoints[1].Y + 3 * t * t * (1 - t) * m_supportingPoints[2].Y + t * t * t * m_supportingPoints[3].Y,
-				//};
-				//Curve.Points.Add(point);
 			}
-			//Curve.Points.Add(m_supportingPoints[m_supportingPoints.Count - 1]);
 		}
 
 		private void CalculateBaseMatrix()
@@ -218,6 +203,14 @@ namespace Spline
 		{
 			m_supportingPoints.RemoveAt(m_supportingPoints.Count - 1);
 			m_supportingPoints.RemoveAt(m_supportingPoints.Count - 1);
+		}
+
+
+		private void PointPositionChanged(object sender, PropertyChangedEventArgs e)
+		{
+			Erase(m_canvas);
+			CalculateCurve();
+			Draw(m_canvas);
 		}
 
 		public static bool AboutEqual(double x, double y)
