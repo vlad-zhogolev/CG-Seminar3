@@ -8,7 +8,7 @@ namespace Spline
 	/// <summary>
 	/// Interaction logic for BezierCurve.xaml
 	/// </summary>
-	public partial class BezierCurve : UserControl
+	public partial class BezierCurve : UserControl, IBezierCurve
 	{
 		public static readonly double STEP = 0.005;
 		private IList<SupportingPoint> m_supportingPoints;

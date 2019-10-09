@@ -1,14 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System;
-using System.Collections.Generic;
 using System.Windows.Controls;
 using System.ComponentModel;
 
@@ -72,6 +63,13 @@ namespace Spline
 
 		public Edge() { }
 
+		public Edge(SupportingPoint begin, SupportingPoint middle, SupportingPoint end)
+		{
+			Points.Add(begin);
+			Points.Add(middle);
+			Points.Add(end);
+		}
+
 		public Edge(IList<SupportingPoint> points)
 		{
 			if (points.Count != 3)
@@ -84,12 +82,11 @@ namespace Spline
 	/// <summary>
 	/// Interaction logic for CompositeBezierCurve.xaml
 	/// </summary>
-	public partial class CompositeBezierCurve : UserControl
+	public partial class CompositeBezierCurve : UserControl, IBezierCurve
 	{
 		public static readonly double STEP = 0.05;
 		private IList<SupportingPoint> m_supportingPoints;
-		private IList<Edge> m_edges;
-		private double[,] m_supportingPointsMatrix;
+		private IList<Edge> m_edges;	
 		private double[,] m_baseMatrix;
 		private bool m_isClosed;
 		private Canvas m_canvas;
@@ -124,18 +121,16 @@ namespace Spline
 
 		public void Draw(Canvas canvas)
 		{
-			canvas.Children.Add(this);
-			var size = m_isClosed ? m_supportingPoints.Count - 1 : m_supportingPoints.Count;
-			for ( var i = 0 ; i < size ; ++i )
+			canvas.Children.Add(this);			
+			for ( var i = 0 ; i < m_supportingPoints.Count ; ++i )
 			{
 				canvas.Children.Add(m_supportingPoints[i]);
 			}
 		}
 
 		public void Erase(Canvas canvas)
-		{
-			var size = m_isClosed ? m_supportingPoints.Count - 1 : m_supportingPoints.Count;
-			for ( var i = 0 ; i < size ; ++i )
+		{			
+			for ( var i = 0 ; i < m_supportingPoints.Count ; ++i )
 			{
 				canvas.Children.Remove(m_supportingPoints[i]);
 			}
@@ -271,16 +266,15 @@ namespace Spline
 
 		private void CloseCurve()
 		{
-			var point = CalculateSymmetricPoint(m_supportingPoints[0], m_supportingPoints[1]);
-			point.PropertyChanged += PointPositionChanged;
-			m_supportingPoints.Add(point);
-			m_supportingPoints.Add(m_supportingPoints[0]);
+			var edge = new Edge(m_supportingPoints[0],
+							m_supportingPoints[1],
+							m_supportingPoints[2]);
+			m_edges.Add(edge);
 		}
 
 		private void OpenCurve()
-		{
-			m_supportingPoints.RemoveAt(m_supportingPoints.Count - 1);
-			m_supportingPoints.RemoveAt(m_supportingPoints.Count - 1);
+		{			
+			m_edges.RemoveAt(m_edges.Count - 1);			
 		}
 
 

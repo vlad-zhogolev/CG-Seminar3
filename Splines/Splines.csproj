@@ -63,6 +63,7 @@
     <Compile Include="CompositeBezierCurve.xaml.cs">
       <DependentUpon>CompositeBezierCurve.xaml</DependentUpon>
     </Compile>
+    <Compile Include="IBezierCurve.cs" />
     <Compile Include="Mode.cs" />
     <Compile Include="SupportingPoint.xaml.cs">
       <DependentUpon>SupportingPoint.xaml</DependentUpon>

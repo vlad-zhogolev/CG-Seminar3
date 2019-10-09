@@ -34,8 +34,7 @@ namespace Spline
 		private DrawingMode m_drawingMode = DrawingMode.Default;
 		private BezierLineType m_lineType = BezierLineType.ArbitraryOrder;
 		private IList<SupportingPoint> m_points = new List<SupportingPoint>();
-		private BezierCurve m_curve;
-		private CompositeBezierCurve m_compositeCurve;
+		private IBezierCurve m_curve;		
 		private bool m_isCurveDrawn = false;
 
 		// Currently moving point
@@ -158,13 +157,13 @@ namespace Spline
 					AddHandlers(supportingPoint);
 					m_points.Insert(0, supportingPoint);
 
-					m_compositeCurve = new CompositeBezierCurve(m_points, Canvas);
+					m_curve = new CompositeBezierCurve(m_points, Canvas);
 					foreach ( var point in m_points )
 					{
 						Canvas.Children.Remove(point);
 					}
 					m_points = new List<SupportingPoint>();
-					m_compositeCurve.Draw(Canvas);
+					m_curve.Draw(Canvas);
 					m_isCurveDrawn = true;
 					CloseCurveButton.IsEnabled = true;
 				}
