@@ -11,6 +11,8 @@ namespace Spline
 
 		public static readonly DependencyProperty TopOffsetProperty;
 
+		public bool IsSupressNotifications { get; set; }
+
 		static MovableControl()
 		{
 			LeftOffsetProperty =
@@ -24,7 +26,10 @@ namespace Spline
 				new PropertyMetadata(double.NaN, new PropertyChangedCallback(OffsetPropertyChangedCallback)));
 		}
 
-		public MovableControl() {}
+		public MovableControl()
+		{
+			IsSupressNotifications = false;
+		}
 
 		public double LeftOffset
 		{
@@ -48,7 +53,10 @@ namespace Spline
 		}
 		protected void OnPropertyChanged([CallerMemberName]string prop = "")
 		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+			if ( !IsSupressNotifications )
+			{
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+			}
 		}
 	}
 }

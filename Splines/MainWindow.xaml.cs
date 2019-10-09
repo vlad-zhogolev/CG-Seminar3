@@ -118,7 +118,7 @@ namespace Spline
 				return;
 			}
 
-			if (m_lineType == BezierLineType.CompositeThirdOrder && (m_points.Count - 4) < 0 && (m_points.Count - 4) % 3 != 0)
+			if (m_lineType == BezierLineType.CompositeThirdOrder && (m_points.Count < 4 || m_points.Count % 3 == 0))
 			{
 				return;
 			}
@@ -172,7 +172,7 @@ namespace Spline
 		}
 
 		private void CloseCurveButton_Click(object sender, RoutedEventArgs e)
-		{
+		{			
 			if (m_curve != null && m_isCurveDrawn)
 			{
 				m_curve.Erase(Canvas);

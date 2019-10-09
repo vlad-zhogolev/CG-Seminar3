@@ -7,7 +7,7 @@ namespace Spline
 {
 	public class Edge
 	{
-		private IList<SupportingPoint> m_points = new List<SupportingPoint>();
+		private IList<SupportingPoint> m_points = new List<SupportingPoint>(3);
 
 		public IList<SupportingPoint> Points
 		{
@@ -61,10 +61,8 @@ namespace Spline
 			}
 		}
 
-		public Edge() { }
-
 		public Edge(SupportingPoint begin, SupportingPoint middle, SupportingPoint end)
-		{
+		{			
 			Points.Add(begin);
 			Points.Add(middle);
 			Points.Add(end);
@@ -103,13 +101,13 @@ namespace Spline
 			m_isClosed = isClosed;
 			m_canvas = canvas;
 			m_edges = new List<Edge>();	
-			for(int i = 0 ; i < m_supportingPoints.Count ; ++i)
+			for(int i = 0 ; i < m_supportingPoints.Count ; i+= 3)
 			{
-				if (i % 3 == 0)
+				m_edges.Add(new Edge(m_supportingPoints[i], m_supportingPoints[i + 1], m_supportingPoints[i + 2]));
+				for ( int j = 0 ; j < 3 ; ++j )
 				{
-					m_edges.Add(new Edge());
+					m_supportingPoints[i + j].PropertyChanged += PointPositionChanged;
 				}
-				m_supportingPoints[i].PropertyChanged += PointPositionChanged;
 				m_edges[m_edges.Count - 1].Points.Add(m_supportingPoints[i]);
 			}
 			if ( m_isClosed )
@@ -124,7 +122,7 @@ namespace Spline
 			canvas.Children.Add(this);			
 			for ( var i = 0 ; i < m_supportingPoints.Count ; ++i )
 			{
-				canvas.Children.Add(m_supportingPoints[i]);
+				canvas.Children.Add(m_supportingPoints[i]); 
 			}
 		}
 
@@ -280,6 +278,57 @@ namespace Spline
 
 		private void PointPositionChanged(object sender, PropertyChangedEventArgs e)
 		{
+			var point = sender as SupportingPoint;
+			Edge edge = null;
+			foreach(var edg in m_edges)
+			{
+				if ( edg.Points.Contains(point) )
+				{
+					edge = edg;
+					break;
+				}			
+			}
+
+			if (edge.Begin == point)
+			{
+				edge.End.IsSupressNotifications = true;
+
+				var tmp = Utility.CalculateSymmetricPoint(edge.Middle, edge.Begin);
+				edge.End.X = tmp.X;
+				edge.End.Y = tmp.Y;
+				
+				edge.End.IsSupressNotifications = false;
+			}
+			else if ( edge.End == point )
+			{
+				edge.Begin.IsSupressNotifications = true;
+
+				var tmp = Utility.CalculateSymmetricPoint(edge.Middle, edge.End);
+				edge.Begin.X = tmp.X;
+				edge.Begin.Y = tmp.Y;
+
+				edge.Begin.IsSupressNotifications = false;
+			}
+			else
+			{
+				edge.Begin.IsSupressNotifications = true;
+				edge.End.IsSupressNotifications = true;
+
+				var previousX = edge.End.X + (edge.Begin.X - edge.End.X) / 2.0;
+				var previousY = edge.End.Y + (edge.Begin.Y - edge.End.Y) / 2.0;
+
+				var differenceX = edge.Middle.X - previousX;
+				var differenceY = edge.Middle.Y - previousY;
+
+				edge.End.X += differenceX;
+				edge.End.Y += differenceY;
+
+				edge.Begin.X += differenceX;
+				edge.Begin.Y += differenceY;
+
+				edge.Begin.IsSupressNotifications = false;
+				edge.End.IsSupressNotifications = false;
+			}
 			Erase(m_canvas);
 			CalculateCurve();
 			Draw(m_canvas);
