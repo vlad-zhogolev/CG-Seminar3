@@ -49,7 +49,7 @@ namespace Spline
 				y = value;
 				TopOffset = y - RADIUS;
 			}
-		}
+		}	
 
 		public SupportingPoint(double x, double y)
 		{

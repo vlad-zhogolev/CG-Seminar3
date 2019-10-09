@@ -39,10 +39,6 @@ namespace Spline
 
 		// Currently moving point
 		UIElement m_capturedPoint = null;
-		double m_currentX;
-		double m_currentY;
-		double m_nextX;
-		double m_nextY;
 
 		public MainWindow()
 		{
@@ -91,7 +87,7 @@ namespace Spline
 			{
 				case DrawingMode.Default:
 				{
-					m_curve = new BezierCurve(m_points);
+					m_curve = new BezierCurve(m_points, Canvas);
 					foreach(var point in m_points)
 					{
 						Canvas.Children.Remove(point);

@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.ComponentModel;
+
 
 namespace Spline
 {
@@ -25,8 +27,9 @@ namespace Spline
 		private double[,] m_supportingPointsMatrix;
 		private double[,] m_baseMatrix;
 		private bool m_isClosed;
+		private Canvas m_canvas;
 
-		public BezierCurve(IList<SupportingPoint> points, bool isClosed = false)
+		public BezierCurve(IList<SupportingPoint> points, Canvas canvas, bool isClosed = false)
 		{
 			if (points.Count < 2)
 			{
@@ -35,11 +38,23 @@ namespace Spline
 			InitializeComponent();			
 			m_supportingPoints = points;
 			m_isClosed = isClosed;
+			m_canvas = canvas;
+			foreach(var point in m_supportingPoints)
+			{
+				point.PropertyChanged += PointPositionChanged;
+			}
 			if (m_isClosed)
 			{
 				CloseCurve();
 			}
 			CalculateCurve();
+		}
+
+		private void PointPositionChanged(object sender, PropertyChangedEventArgs e)
+		{
+			Erase(m_canvas);
+			CalculateCurve();
+			Draw(m_canvas);
 		}
 
 		public void Draw(Canvas canvas)
