@@ -29,10 +29,18 @@ namespace Spline
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		// Program state
 		private Mode m_mode = Mode.Default;
 		private DefaultMode m_defaultMode = DefaultMode.ArbitraryOrder;
-		private IList<Point> m_points = new List<Point>();
+		private IList<SupportingPoint> m_points = new List<SupportingPoint>();
 		private BezierCurve m_curve;
+		private bool m_isCurveDrawn = false;
+
+		// Currently moving point
+		double m_pointX;
+		double m_pointY;
+		double m_nextX;
+		double m_nextY;
 
 		public MainWindow()
 		{
@@ -40,57 +48,61 @@ namespace Spline
 		}
 
 		private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-		{	
-			
+		{
+			if (m_isCurveDrawn)
+			{
+				return;
+			}
+			var supportingPoint = new SupportingPoint(e.GetPosition(Canvas));
+			m_points.Add(supportingPoint);	
+			Canvas.Children.Add(supportingPoint);			
 		}
 
 		private void ClearCanvas_Click(object sender, RoutedEventArgs e)
 		{
-			ClearCanvas();
+			ResetDrawingSpace();
+			m_isCurveDrawn = false;
 		}
 
-		private void ClearCanvas()
+		private void ResetDrawingSpace()
 		{
 			Canvas.Children.Clear();
-			m_points.Clear();
-			m_curve = null;
+			m_points = new List<SupportingPoint>();
 		}
 
-		private void DrawAllPoints()
-		{			
-			foreach(var point in m_points)
+		private void DrawButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (m_points.Count < 2)
 			{
-				DrawPoint(point);
+				return;
 			}
-		}	
 
-		private void DrawPixel(Point point)
-		{
-			DrawPixel(point.X, point.Y);
+			switch (m_mode)
+			{
+				case Mode.Default:
+				{
+					m_curve = new BezierCurve(m_points);
+					foreach(var point in m_points)
+					{
+						Canvas.Children.Remove(point);
+					}
+					m_points = new List<SupportingPoint>();
+					m_curve.Draw(Canvas);
+					m_isCurveDrawn = true;
+					CloseCurveButton.IsEnabled = true;
+				}
+				break;
+			}
 		}
 
-		private void DrawPixel(double x, double y)
+		private void CloseCurveButton_Click(object sender, RoutedEventArgs e)
 		{
-			var ellipse = new Ellipse();
-			Canvas.SetLeft(ellipse, x);
-			Canvas.SetTop(ellipse, y);
-			ellipse.Width = Constants.PIXEL_RADIUS;
-			ellipse.Height = Constants.PIXEL_RADIUS;
-			ellipse.Fill = Constants.PIXEL_COLOR;
-
-			Canvas.Children.Add(ellipse);
-		}
-
-		private void DrawPoint(Point point, int radius = Constants.POINT_RADIUS)
-		{
-			var ellipse = new Ellipse();			
-			Canvas.SetLeft(ellipse, point.X - Constants.POINT_RADIUS);
-			Canvas.SetTop(ellipse, point.Y - Constants.POINT_RADIUS);
-			ellipse.Width = 2 * Constants.POINT_RADIUS;
-			ellipse.Height = 2 * Constants.POINT_RADIUS;
-			ellipse.Fill = Constants.POINT_COLOR;
-
-			Canvas.Children.Add(ellipse);
+			if (m_curve != null)
+			{
+				m_curve.Erase(Canvas);
+				m_curve.Close();
+				m_curve.Draw(Canvas);
+			}			
 		}
 	}
 }

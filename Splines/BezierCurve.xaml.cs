@@ -20,37 +20,89 @@ namespace Spline
 	/// </summary>
 	public partial class BezierCurve : UserControl
 	{
-		public static readonly double STEP = 0.01;
-		private IList<Point> m_supportingPoints;
+		public static readonly double STEP = 0.005;
+		private IList<SupportingPoint> m_supportingPoints;
 		private double[,] m_supportingPointsMatrix;
 		private double[,] m_baseMatrix;
+		private bool m_isClosed;
 
-		public BezierCurve(IList<Point> points)
+		public BezierCurve(IList<SupportingPoint> points, bool isClosed = false)
 		{
+			if (points.Count < 2)
+			{
+				throw new ArgumentException("Bezier curve must have at least 2 supporting points");
+			}
 			InitializeComponent();			
 			m_supportingPoints = points;
-			Point point = CalculateSymmetricPoint(m_supportingPoints[0], m_supportingPoints[1]);
-			m_supportingPoints.Add(point);
-			m_supportingPoints.Add(m_supportingPoints[0]);			
+			m_isClosed = isClosed;
+			if (m_isClosed)
+			{
+				CloseCurve();
+			}
 			CalculateCurve();
 		}
 
-		public void AddPoint(Point point)
+		public void Draw(Canvas canvas)
+		{
+			canvas.Children.Add(this);
+			var size = m_isClosed ? m_supportingPoints.Count - 1 : m_supportingPoints.Count;
+			for (var i = 0 ; i < size ; ++i)
+			{
+				canvas.Children.Add(m_supportingPoints[i]);
+			}		
+		}
+
+		public void Erase(Canvas canvas)
+		{
+			var size = m_isClosed ? m_supportingPoints.Count - 1 : m_supportingPoints.Count;
+			for ( var i = 0 ; i < size ; ++i )
+			{
+				canvas.Children.Remove(m_supportingPoints[i]);
+			}
+			canvas.Children.Remove(this);
+		}
+
+		public bool IsClosed
+		{
+			get {return m_isClosed;}
+			set {m_isClosed = value;}
+		}
+
+		public void Close()
+		{
+			if (!m_isClosed)
+			{
+				m_isClosed = true;
+				CloseCurve();
+				CalculateCurve();
+			}
+		}
+
+		public void Open()
+		{
+			if (m_isClosed)
+			{
+				m_isClosed = false;
+				OpenCurve();
+				CalculateCurve();
+			}
+		}
+
+		public void AddPoint(SupportingPoint point)
 		{
 			m_supportingPoints.Add(point);
 		}
 
 		public void CalculateCurve()
-		{
+		{		
 			if (m_supportingPoints.Count < 1)
 			{
 				throw new ArgumentOutOfRangeException("Number of supporting points must be greater than 1");
 			}
-
+			Curve.Points.Clear();
 			CreateMatrixFromPoints();
 			CalculateBaseMatrix();
 			var PM = MultiplyMatrices(m_supportingPointsMatrix, m_baseMatrix);
-
 			for (double t = 0.0 ; !AboutEqual(t, 1.0 + STEP) ; t += STEP )
 			{
 				var stepMatrix = CreateMatrixFromStep(t);
@@ -125,7 +177,7 @@ namespace Spline
 			{
 				result[0, i] = m_supportingPoints[i].X;
 				result[1, i] = m_supportingPoints[i].Y;
-			}
+			}			
 			m_supportingPointsMatrix = result;
 		}
 
@@ -139,17 +191,30 @@ namespace Spline
 			return result;
 		}
 
+		private void CloseCurve()
+		{
+			var point = CalculateSymmetricPoint(m_supportingPoints[0], m_supportingPoints[1]);
+			m_supportingPoints.Add(point);
+			m_supportingPoints.Add(m_supportingPoints[0]);
+		}
+
+		private void OpenCurve()
+		{
+			m_supportingPoints.RemoveAt(m_supportingPoints.Count - 1);
+			m_supportingPoints.RemoveAt(m_supportingPoints.Count - 1);
+		}
+
 		public static bool AboutEqual(double x, double y)
 		{
 			double epsilon = Math.Max(Math.Abs(x), Math.Abs(y)) * 1E-15;
 			return Math.Abs(x - y) <= epsilon;
 		}
 
-		private static Point CalculateSymmetricPoint(Point symmetryCenter, Point point)
+		private static SupportingPoint CalculateSymmetricPoint(SupportingPoint symmetryCenter, SupportingPoint point)
 		{
 			double x = symmetryCenter.X - (point.X - symmetryCenter.X);
 			double y = symmetryCenter.Y - (point.Y - symmetryCenter.Y);
-			return new Point(x, y);
+			return new SupportingPoint(x, y);
 		}
 	}
 }

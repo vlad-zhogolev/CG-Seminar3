@@ -23,14 +23,41 @@ namespace Spline
 		public static readonly double RADIUS = 3;
 		public static readonly double DIAMETER = 2 * RADIUS;
 
-		public Point Coordinates { get; set; }
+		private double x;
+		private double y;
 
-		public SupportingPoint(Point point)
+		public double X {
+			get
+			{
+				return x;
+			}
+			set
+			{
+				x = value;
+				LeftOffset = x - RADIUS;
+			}
+		}
+
+		public double Y {
+			get
+			{
+				return y;
+			}
+
+			set
+			{
+				y = value;
+				TopOffset = y - RADIUS;
+			}
+		}
+
+		public SupportingPoint(double x, double y)
 		{
 			InitializeComponent();
-			Coordinates = point;
-			LeftOffset = Coordinates.X - RADIUS;
-			TopOffset = Coordinates.Y - RADIUS;
+			X = x;
+			Y = y;
 		}
+		
+		public SupportingPoint(Point point) : this(point.X, point.Y) {}
 	}
 }
