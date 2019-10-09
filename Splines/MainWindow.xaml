@@ -16,7 +16,11 @@
             <Button Name="ClearCanvasButton" Content="Clear" Width="50" Height="25" Click="ClearCanvas_Click"/>
             <Button x:Name="DrawButton" Content="Draw" Width="50" Margin="10" Height="25" Click="DrawButton_Click"/>
             <Button x:Name="CloseCurveButton" Content="Close curve" Width="75" Height="25" Click="CloseCurveButton_Click"/>
-            <RadioButton x:Name="CursorModeRadioButton" Content="Move points" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10" Checked="CursorModeRadioButton_Checked" Unchecked="CursorModeRadioButton_Unchecked"/>
+            <StackPanel Width="111" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <RadioButton x:Name="SetPointsRadioButton" Content="Set points" Margin="10,5" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SetPointsRadioButton_Checked" IsChecked="True"/>
+                <RadioButton x:Name="MovePointsRadioButton" Content="Move points" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,5" Checked="MovePointsRadioButton_Checked"/>
+            </StackPanel>
+            <StackPanel Width="100"/>
         </StackPanel>
         <Border Grid.Row="1" Grid.Column="1" Grid.RowSpan="2"
             Margin="5 5 5 5"

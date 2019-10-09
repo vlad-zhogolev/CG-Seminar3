@@ -144,14 +144,22 @@ namespace Spline
 			m_capturedPoint = null;
 		}
 
-		private void CursorModeRadioButton_Checked(object sender, RoutedEventArgs e)
+		private void MovePointsRadioButton_Checked(object sender, RoutedEventArgs e)
 		{
 			m_cursorMode = CursorMode.MovingPoints;
+			if ( SetPointsRadioButton != null )
+			{
+				SetPointsRadioButton.IsChecked = false;
+			}
 		}
 
-		private void CursorModeRadioButton_Unchecked(object sender, RoutedEventArgs e)
+		private void SetPointsRadioButton_Checked(object sender, RoutedEventArgs e)
 		{
 			m_cursorMode = CursorMode.SettingPoints;
+			if ( MovePointsRadioButton != null )
+			{
+				MovePointsRadioButton.IsChecked = false;
+			}
 		}
 	}
 }

@@ -209,6 +209,7 @@ namespace Spline
 		private void CloseCurve()
 		{
 			var point = CalculateSymmetricPoint(m_supportingPoints[0], m_supportingPoints[1]);
+			point.PropertyChanged += PointPositionChanged;
 			m_supportingPoints.Add(point);
 			m_supportingPoints.Add(m_supportingPoints[0]);
 		}
