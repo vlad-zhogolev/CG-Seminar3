@@ -29,6 +29,8 @@ namespace Spline
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		private Mode m_mode = Mode.Default;
+		private DefaultMode m_defaultMode = DefaultMode.ArbitraryOrder;
 		private IList<Point> m_points = new List<Point>();
 		private BezierCurve m_curve;
 
@@ -38,22 +40,8 @@ namespace Spline
 		}
 
 		private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-		{			
-			if ( m_points.Count == 10)
-			{
-				ClearCanvas();
-			}
-			else
-			{
-				m_points.Add(e.GetPosition(Canvas));				
-				Canvas.Children.Clear();
-				DrawAllPoints();
-				if ( m_points.Count == 10 )
-				{
-					m_curve = new BezierCurve(m_points);
-					Canvas.Children.Add(m_curve);
-				}
-			}					
+		{	
+			
 		}
 
 		private void ClearCanvas_Click(object sender, RoutedEventArgs e)
@@ -69,12 +57,12 @@ namespace Spline
 		}
 
 		private void DrawAllPoints()
-		{
+		{			
 			foreach(var point in m_points)
 			{
 				DrawPoint(point);
 			}
-		}		
+		}	
 
 		private void DrawPixel(Point point)
 		{

@@ -27,8 +27,11 @@ namespace Spline
 
 		public BezierCurve(IList<Point> points)
 		{
-			InitializeComponent();
+			InitializeComponent();			
 			m_supportingPoints = points;
+			Point point = CalculateSymmetricPoint(m_supportingPoints[0], m_supportingPoints[1]);
+			m_supportingPoints.Add(point);
+			m_supportingPoints.Add(m_supportingPoints[0]);			
 			CalculateCurve();
 		}
 
@@ -140,6 +143,13 @@ namespace Spline
 		{
 			double epsilon = Math.Max(Math.Abs(x), Math.Abs(y)) * 1E-15;
 			return Math.Abs(x - y) <= epsilon;
+		}
+
+		private static Point CalculateSymmetricPoint(Point symmetryCenter, Point point)
+		{
+			double x = symmetryCenter.X - (point.X - symmetryCenter.X);
+			double y = symmetryCenter.Y - (point.Y - symmetryCenter.Y);
+			return new Point(x, y);
 		}
 	}
 }
