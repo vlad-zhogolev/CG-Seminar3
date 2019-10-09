@@ -64,6 +64,7 @@
     <Compile Include="SupportingPoint.xaml.cs">
       <DependentUpon>SupportingPoint.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utility.cs" />
     <Page Include="BezierCurve.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

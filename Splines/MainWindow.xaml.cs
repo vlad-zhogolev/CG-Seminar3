@@ -47,21 +47,56 @@ namespace Spline
 
 		private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
-			if (m_cursorMode == CursorMode.MovingPoints)
+			if (m_cursorMode == CursorMode.MovingPoints || m_isCurveDrawn)
 			{
 				return;
 			}
 
-			if ( m_isCurveDrawn )
+			switch (m_lineType)
 			{
-				return;
+				case BezierLineType.ArbitraryOrder:
+				{
+					var supportingPoint = new SupportingPoint(e.GetPosition(Canvas));
+					AddHandlers(supportingPoint);
+					m_points.Add(supportingPoint);
+					Canvas.Children.Add(supportingPoint);
+				}
+				break;
+				case BezierLineType.ThirdOrder:
+				{
+					if ( m_points.Count == 4 )
+					{
+						return;
+					}
+					var supportingPoint = new SupportingPoint(e.GetPosition(Canvas));
+					AddHandlers(supportingPoint);
+					m_points.Add(supportingPoint);
+					Canvas.Children.Add(supportingPoint);										
+				}
+				break;
+				case BezierLineType.CompositeThirdOrder:
+				{
+					var supportingPoint = new SupportingPoint(e.GetPosition(Canvas));
+					AddHandlers(supportingPoint);
+					m_points.Add(supportingPoint);
+					Canvas.Children.Add(supportingPoint);
+
+					if (m_points.Count % 6 == 4 || (m_points.Count > 4 && m_points.Count % 6 == 1))
+					{
+						var size = m_points.Count;
+						supportingPoint = Utility.CalculateSymmetricPoint(m_points[size - 1], m_points[size - 2]);
+						AddHandlers(supportingPoint);
+						m_points.Add(supportingPoint);
+						Canvas.Children.Add(supportingPoint);
+					}
+				}
+				break;
+				default:
+				{
+					throw new Exception("Wrong BezierLineType");
+				}
+				break;
 			}
-			var supportingPoint = new SupportingPoint(e.GetPosition(Canvas));
-			supportingPoint.MouseLeftButtonDown += PointStartMoving;
-			supportingPoint.MouseMove += PointMoving;
-			supportingPoint.MouseLeftButtonUp += PointEndMoving;
-			m_points.Add(supportingPoint);
-			Canvas.Children.Add(supportingPoint);
 		}
 
 		private void ClearCanvas_Click(object sender, RoutedEventArgs e)
@@ -79,6 +114,11 @@ namespace Spline
 		private void DrawButton_Click(object sender, RoutedEventArgs e)
 		{			
 			if (m_points.Count < 2)
+			{
+				return;
+			}
+
+			if (m_lineType == BezierLineType.CompositeThirdOrder && (m_points.Count - 4) < 0 && (m_points.Count - 4) % 3 != 0)
 			{
 				return;
 			}
@@ -119,6 +159,13 @@ namespace Spline
 				m_curve.Open();
 				m_curve.Draw(Canvas);
 			}
+		}
+
+		private void AddHandlers(SupportingPoint supportingPoint)
+		{
+			supportingPoint.MouseLeftButtonDown += PointStartMoving;
+			supportingPoint.MouseMove += PointMoving;
+			supportingPoint.MouseLeftButtonUp += PointEndMoving;
 		}
 
 		private void PointStartMoving(object sender, MouseButtonEventArgs e)
@@ -171,5 +218,26 @@ namespace Spline
 				MovePointsRadioButton.IsChecked = false;
 			}
 		}
+
+		private void ArbitraryOrderCurveButton_Click(object sender, RoutedEventArgs e)
+		{
+			SwitchLineType(BezierLineType.ArbitraryOrder);
+		}
+
+		private void ThirdOrderCurveButton_Click(object sender, RoutedEventArgs e)
+		{
+			SwitchLineType(BezierLineType.ThirdOrder);
+		}
+
+		private void CompositeCurveButton_Click(object sender, RoutedEventArgs e)
+		{
+			SwitchLineType(BezierLineType.CompositeThirdOrder);
+		}	
+		
+		private void SwitchLineType(BezierLineType type)
+		{
+			m_lineType = type;
+			ResetDrawingSpace();
+		}	
 	}
 }
