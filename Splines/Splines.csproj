@@ -60,12 +60,19 @@
     <Compile Include="BezierCurve.xaml.cs">
       <DependentUpon>BezierCurve.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CompositeBezierCurve.xaml.cs">
+      <DependentUpon>CompositeBezierCurve.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Mode.cs" />
     <Compile Include="SupportingPoint.xaml.cs">
       <DependentUpon>SupportingPoint.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utility.cs" />
     <Page Include="BezierCurve.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CompositeBezierCurve.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
