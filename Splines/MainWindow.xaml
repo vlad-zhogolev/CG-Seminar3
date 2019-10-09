@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Spline"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="509.759" Width="895.07">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="70"/>
@@ -16,7 +16,13 @@
                 <RadioButton x:Name="SetPointsRadioButton" Content="Set points" Margin="10,5" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SetPointsRadioButton_Checked" IsChecked="True"/>
                 <RadioButton x:Name="MovePointsRadioButton" Content="Move points" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,5" Checked="MovePointsRadioButton_Checked"/>
             </StackPanel>
+            <StackPanel Width="125" Margin="0,9" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <RadioButton x:Name="WithCasteglioRadioButton" Content="With Casteglio" Margin="10,5" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SetPointsRadioButton_Checked"/>
+                <RadioButton x:Name="MovePointsRadioButton1" Content="Default" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,5" Checked="MovePointsRadioButton_Checked" IsChecked="True"/>
+            </StackPanel>
             <Button Height="25" Width="100" Margin="10 10 10 10" x:Name="Default" Content="Default curve"/>
+            <Button x:Name="ThirdOrderCurveButton" Content="3rd order" Width="75"/>
+            <Button x:Name="CompositeCurveButton" Content="Composite" Width="75"/>
             <Button x:Name="ClearCanvasButton" Content="Clear" Width="50" Height="25" Click="ClearCanvas_Click"/>
             <Button x:Name="DrawButton" Content="Draw" Width="50" Margin="10" Height="25" Click="DrawButton_Click"/>
             <Button x:Name="CloseCurveButton" Content="Close curve" Width="75" Height="25" Click="CloseCurveButton_Click"/>
