@@ -60,6 +60,9 @@
     <Compile Include="BezierCurve.xaml.cs">
       <DependentUpon>BezierCurve.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CasteglioBezierCurve.xaml.cs">
+      <DependentUpon>CasteglioBezierCurve.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CompositeBezierCurve.xaml.cs">
       <DependentUpon>CompositeBezierCurve.xaml</DependentUpon>
     </Compile>
@@ -70,6 +73,10 @@
     </Compile>
     <Compile Include="Utility.cs" />
     <Page Include="BezierCurve.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CasteglioBezierCurve.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -34,7 +34,8 @@ namespace Spline
 		private DrawingMode m_drawingMode = DrawingMode.Default;
 		private BezierLineType m_lineType = BezierLineType.ArbitraryOrder;
 		private IList<SupportingPoint> m_points = new List<SupportingPoint>();
-		private IBezierCurve m_curve;		
+		private IBezierCurve m_curve;
+		private IBezierCurve m_casteglioCurve;	
 		private bool m_isCurveDrawn = false;
 
 		// Currently moving point
@@ -130,6 +131,11 @@ namespace Spline
 					DrawCurve();
 				}
 				break;
+				case DrawingMode.DefaultWithCastiglio:
+				{
+					DrawWithCastiglio();
+				}
+				break;
 			}
 		}
 
@@ -164,6 +170,48 @@ namespace Spline
 					}
 					m_points = new List<SupportingPoint>();
 					m_curve.Draw(Canvas);
+					m_isCurveDrawn = true;
+					CloseCurveButton.IsEnabled = true;
+				}
+				break;
+			}
+		}
+		
+		private void DrawWithCastiglio()
+		{
+			switch ( m_lineType )
+			{
+				case BezierLineType.ArbitraryOrder:
+				case BezierLineType.ThirdOrder:
+				{
+					m_curve = new BezierCurve(m_points, Canvas);
+					m_casteglioCurve = new CasteglioBezierCurve(m_points, Canvas);
+					foreach ( var point in m_points )
+					{
+						Canvas.Children.Remove(point);
+					}
+					m_points = new List<SupportingPoint>();
+					m_curve.Draw(Canvas);
+					m_casteglioCurve.Draw(Canvas);
+					m_isCurveDrawn = true;
+					CloseCurveButton.IsEnabled = true;
+				}
+				break;
+				case BezierLineType.CompositeThirdOrder:
+				{
+					var supportingPoint = Utility.CalculateSymmetricPoint(m_points[0], m_points[1]);
+					AddHandlers(supportingPoint);
+					m_points.Insert(0, supportingPoint);
+
+					m_curve = new CompositeBezierCurve(m_points, Canvas);
+					m_casteglioCurve = new CasteglioBezierCurve(m_points, Canvas);
+					foreach ( var point in m_points )
+					{
+						Canvas.Children.Remove(point);
+					}
+					m_points = new List<SupportingPoint>();
+					m_curve.Draw(Canvas);
+					m_casteglioCurve.Draw(Canvas);
 					m_isCurveDrawn = true;
 					CloseCurveButton.IsEnabled = true;
 				}
@@ -268,6 +316,24 @@ namespace Spline
 		{
 			m_lineType = type;
 			ResetDrawingSpace();
-		}	
+		}
+
+		private void WithCasteglioRadioButton_Checked(object sender, RoutedEventArgs e)
+		{
+			m_drawingMode = DrawingMode.DefaultWithCastiglio;
+			if (DefaultDrawingModeRadioButton != null)
+			{
+				DefaultDrawingModeRadioButton.IsChecked = false;
+			}
+		}
+
+		private void DefaultDrawingModeRadioButton_Checked(object sender, RoutedEventArgs e)
+		{
+			m_drawingMode = DrawingMode.Default;
+			if ( DefaultDrawingModeRadioButton != null )
+			{
+				WithCasteglioRadioButton.IsChecked = false;
+			}
+		}
 	}
 }
