@@ -14,8 +14,7 @@ namespace Spline
 	{
 		public static readonly double STEP = 0.05;
 		private IList<SupportingPoint> m_supportingPoints;
-		private IList<Edge> m_edges;
-		private double[,] m_baseMatrix;
+		private IList<Edge> m_edges;		
 		private bool m_isClosed;
 		private Canvas m_canvas;
 
@@ -58,23 +57,35 @@ namespace Spline
 
 		public void Open()
 		{
-
+			if ( m_isClosed )
+			{
+				m_isClosed = false;
+				OpenCurve();
+				CalculateCurve();
+			}
 		}
 
 		public void OpenCurve()
 		{
-
+			m_edges.RemoveAt(m_edges.Count - 1);
 		}
 
 		public void Close()
 		{
-
-
+			if ( !m_isClosed )
+			{
+				m_isClosed = true;
+				CloseCurve();
+				CalculateCurve();
+			}
 		}
 
 		public void CloseCurve()
 		{
-
+			var edge = new Edge(m_supportingPoints[0],
+							m_supportingPoints[1],
+							m_supportingPoints[2]);
+			m_edges.Add(edge);
 		}
 
 		private void CalculateCurve()

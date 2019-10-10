@@ -23,7 +23,7 @@ namespace Spline
 			{
 				throw new ArgumentException("Bezier curve must have at least 2 supporting points");
 			}
-			InitializeComponent();			
+			InitializeComponent();
 			m_supportingPoints = points;
 			m_isClosed = isClosed;
 			m_canvas = canvas;
