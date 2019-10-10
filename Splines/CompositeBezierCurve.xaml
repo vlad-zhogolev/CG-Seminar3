@@ -6,7 +6,12 @@
              xmlns:local="clr-namespace:Spline"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Polyline Name="Curve"
+    <Grid>
+        <Polyline Name="Curve"
               StrokeThickness="4"
               Stroke="Blue"/>
+        <Polyline Name="Border"
+                  StrokeThickness="1"
+              Stroke="Black"/>
+    </Grid>
 </UserControl>

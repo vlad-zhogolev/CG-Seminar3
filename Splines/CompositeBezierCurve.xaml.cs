@@ -173,6 +173,7 @@ namespace Spline
 				throw new ArgumentOutOfRangeException("Number of supporting points must be greater than 1");
 			}
 			Curve.Points.Clear();
+			Border.Points.Clear();
 
 			for ( int i = 0 ; i < m_edges.Count - 1 ; ++i )
 			{
@@ -185,7 +186,15 @@ namespace Spline
 					var point = new System.Windows.Point() { X = pointVector[0, 0], Y = pointVector[1, 0] };
 					Curve.Points.Add(point);
 				}
-			}			
+			}
+
+			for ( var i = 0 ; i < m_supportingPoints.Count ; ++i )
+			{
+				var borderPoint = new System.Windows.Point() { X = m_supportingPoints[i].X, Y = m_supportingPoints[i].Y };
+				Border.Points.Add(borderPoint);
+			}
+			var lastBorderPoint = new System.Windows.Point() { X = m_supportingPoints[0].X, Y = m_supportingPoints[0].Y };
+			Border.Points.Add(lastBorderPoint);
 		}
 
 		private void CalculateBaseMatrix()
