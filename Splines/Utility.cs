@@ -15,4 +15,12 @@ namespace Spline
 			return new SupportingPoint(x, y);
 		}
 	}
+
+	static class Extensions
+	{
+		public static IList<T> Clone<T>(this IList<T> list) where T : ICloneable
+		{
+			return list.Select(i => (T)i.Clone()).ToList();
+		}
+	}
 }

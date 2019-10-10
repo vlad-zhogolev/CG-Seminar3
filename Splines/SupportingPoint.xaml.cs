@@ -18,7 +18,7 @@ namespace Spline
 	/// <summary>
 	/// Interaction logic for SupportingPoint.xaml
 	/// </summary>
-	public partial class SupportingPoint : MovableControl
+	public partial class SupportingPoint : MovableControl, ICloneable
 	{
 		public static readonly double RADIUS = 3;
 		public static readonly double DIAMETER = 2 * RADIUS;
@@ -59,5 +59,11 @@ namespace Spline
 		}
 		
 		public SupportingPoint(Point point) : this(point.X, point.Y) {}
+
+		public object Clone()
+		{
+			var result = new SupportingPoint(X, Y);
+			return result;
+		}
 	}
 }

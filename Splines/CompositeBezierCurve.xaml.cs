@@ -120,18 +120,10 @@ namespace Spline
 		public void Draw(Canvas canvas)
 		{
 			canvas.Children.Add(this);			
-			for ( var i = 0 ; i < m_supportingPoints.Count ; ++i )
-			{
-				canvas.Children.Add(m_supportingPoints[i]); 
-			}
 		}
 
 		public void Erase(Canvas canvas)
-		{			
-			for ( var i = 0 ; i < m_supportingPoints.Count ; ++i )
-			{
-				canvas.Children.Remove(m_supportingPoints[i]);
-			}
+		{						
 			canvas.Children.Remove(this);
 		}
 

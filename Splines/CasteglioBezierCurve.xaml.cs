@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.ComponentModel;
 
 namespace Spline
 {
@@ -53,7 +43,7 @@ namespace Spline
 			m_supportingPoints = points;
 			foreach ( var point in m_supportingPoints )
 			{
-				m_points.Add(new Point(point.X, point.Y));
+				point.PropertyChanged += PointPositionChanged;
 			}
 			CalculateCurve();
 		}
@@ -70,19 +60,50 @@ namespace Spline
 
 		public void Open()
 		{
-			
+			if ( m_isClosed )
+			{
+				OpenCurve();
+				CalculateCurve();
+				m_isClosed = false;
+			}
 		}
 
 		public void Close()
 		{
+			if (!m_isClosed)
+			{
+				CloseCurve();
+				CalculateCurve();
+				m_isClosed = true;
+			}
+		}
 
+		private void CloseCurve()
+		{
+			//var point = CalculateSymmetricPoint(m_supportingPoints[0], m_supportingPoints[1]);
+			//point.PropertyChanged += PointPositionChanged;
+			//m_supportingPoints.Add(new Point(point.X, point.Y));
+			//m_supportingPoints.Add(m_points[0]);
+		}
+
+		private void OpenCurve()
+		{
+			//m_points.RemoveAt(m_points.Count - 1);
+			//m_points.RemoveAt(m_points.Count - 1);
 		}
 
 		private void CalculateCurve()
 		{
-			for ( double t = 0.0 ; t <= 1.0 ; t += STEP )
+			Curve.Points.Clear();
+			IList<Point> result = new List<Point>();
+
+			foreach ( var point in m_supportingPoints )
 			{
-				var point = RecursiveCasteglio(t, m_points);
+				result.Add(new Point(point.X, point.Y));
+			}
+			for ( double t = 0.0 ; t <= 1.0 + STEP ; t += STEP )
+			{
+				var point = RecursiveCasteglio(t, result);
 				Curve.Points.Add(point);
 			}
 		}
@@ -101,11 +122,25 @@ namespace Spline
 			return RecursiveCasteglio(t, result);
 		}
 
+		private void PointPositionChanged(object sender, PropertyChangedEventArgs e)
+		{
+			Erase(m_canvas);
+			CalculateCurve();
+			Draw(m_canvas);
+		}
+
 		private static Point Interpolate(Point begin, Point end, double t)
 		{
 			var x = (1.0 - t) * begin.X + t * end.X;
 			var y = (1.0 - t) * begin.Y + t * end.Y;
 			return new Point(x, y);
+		}
+
+		private static SupportingPoint CalculateSymmetricPoint(SupportingPoint symmetryCenter, SupportingPoint point)
+		{
+			double x = symmetryCenter.X - (point.X - symmetryCenter.X);
+			double y = symmetryCenter.Y - (point.Y - symmetryCenter.Y);
+			return new SupportingPoint(x, y);
 		}
 	}
 }

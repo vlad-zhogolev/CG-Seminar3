@@ -95,8 +95,7 @@ namespace Spline
 				default:
 				{
 					throw new Exception("Wrong BezierLineType");
-				}
-				break;
+				}				
 			}
 		}
 
@@ -204,7 +203,14 @@ namespace Spline
 					m_points.Insert(0, supportingPoint);
 
 					m_curve = new CompositeBezierCurve(m_points, Canvas);
-					m_casteglioCurve = new CasteglioBezierCurve(m_points, Canvas);
+					var points = Extensions.Clone(m_points);
+					points.RemoveAt(0);
+					points.RemoveAt(points.Count - 1);
+					foreach(var point in points)
+					{
+						AddHandlers(point);
+					}
+					m_casteglioCurve = new CasteglioBezierCurve(points, Canvas);
 					foreach ( var point in m_points )
 					{
 						Canvas.Children.Remove(point);
@@ -222,10 +228,17 @@ namespace Spline
 		private void CloseCurveButton_Click(object sender, RoutedEventArgs e)
 		{			
 			if (m_curve != null && m_isCurveDrawn)
-			{
-				m_curve.Erase(Canvas);
+			{				
+				m_curve.Erase(Canvas); // points are erased for both curves
 				m_curve.Close();
 				m_curve.Draw(Canvas);
+
+				if (m_drawingMode == DrawingMode.DefaultWithCastiglio)
+				{
+					m_casteglioCurve.Erase(Canvas);
+					m_casteglioCurve.Close();
+					m_casteglioCurve.Draw(Canvas);
+				}				
 			}			
 		}
 
@@ -236,6 +249,13 @@ namespace Spline
 				m_curve.Erase(Canvas);
 				m_curve.Open();
 				m_curve.Draw(Canvas);
+
+				if ( m_drawingMode == DrawingMode.DefaultWithCastiglio )
+				{
+					m_casteglioCurve.Erase(Canvas);
+					m_casteglioCurve.Open();
+					m_casteglioCurve.Draw(Canvas);
+				}
 			}
 		}
 
