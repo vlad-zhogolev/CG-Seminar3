@@ -347,5 +347,10 @@ namespace Spline
 				WithCasteglioRadioButton.IsChecked = false;
 			}
 		}
+
+		private void AboutProgramButton_Click(object sender, RoutedEventArgs e)
+		{
+			MessageBox.Show("Семинар 3: Сплайновые кривые\n Автор: Жоголев Владислав\n Группа: БПИ 164\n Среда разработки: Visual Studio 2015\n Язык разработки:C#\n Дата выполнения:10.10.2019");
+		}
 	}
 }
