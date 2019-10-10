@@ -45,7 +45,7 @@ namespace Spline
 			for (var i = 0 ; i < size ; ++i)
 			{
 				canvas.Children.Add(m_supportingPoints[i]);
-			}		
+			}	
 		}
 
 		public void Erase(Canvas canvas)
