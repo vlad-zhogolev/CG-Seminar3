@@ -201,16 +201,8 @@ namespace Spline
 					var supportingPoint = Utility.CalculateSymmetricPoint(m_points[0], m_points[1]);
 					AddHandlers(supportingPoint);
 					m_points.Insert(0, supportingPoint);
-
 					m_curve = new CompositeBezierCurve(m_points, Canvas);
-					var points = Extensions.Clone(m_points);
-					points.RemoveAt(0);
-					points.RemoveAt(points.Count - 1);
-					foreach(var point in points)
-					{
-						AddHandlers(point);
-					}
-					m_casteglioCurve = new CasteglioBezierCurve(points, Canvas);
+					m_casteglioCurve = new CompositeCasteglioBezierCurve(m_points, Canvas);
 					foreach ( var point in m_points )
 					{
 						Canvas.Children.Remove(point);
